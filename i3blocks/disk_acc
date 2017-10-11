@@ -1,0 +1,42 @@
+#!/usr/bin/python3
+
+import subprocess as proc
+
+
+def get_size(n_blocks):
+    "get size from no of 1K block sizes"
+    size_indicators = ('K', 'M', 'G', 'T')
+    for index, size in enumerate(size_indicators):
+        if 1 <= n_blocks < 1024:
+            return str(n_blocks) + size
+        else:
+            n_blocks = round(n_blocks / 1024, 2)
+    raise ValueError("Value out of bounds → [1, 1024**3)")
+
+
+if __name__ == '__main__':
+    df = proc.check_output(['df', '-hk',
+                            '--output=avail,pcent', '/']).decode('utf-8')
+    avail_b, pcent_use = [elem
+                        for elem
+                        in df.split('\n')[1].split(' ')
+                        if len(elem)]
+
+    avail_h = get_size(int(avail_b))
+    pcent_use = int(pcent_use[:-1])
+
+    ##########
+    ### output
+    ##########
+    print(avail_h) # full_text
+    print(avail_h) # short_text
+    # color
+    if pcent_use < 60:
+        # great
+        print("#A6F22E")
+    elif pcent_use < 80:
+        # warn
+        print("#F4BF75")
+    else:
+        # alert
+        print("#FD971F")

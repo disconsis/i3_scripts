@@ -1,0 +1,17 @@
+#!/bin/bash
+
+state=$(xset q | grep Caps | cut -d ' ' -f 10)
+
+if [ $state == "on" ]; then
+    echo ''
+    echo ''
+    echo "#FD971F"
+elif [ $state == "off" ]; then
+    echo ''
+    echo ''
+    echo "#F4BF75"
+else
+    echo '?'
+    echo '?'
+    echo "#ff0000"
+fi

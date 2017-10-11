@@ -1,0 +1,12 @@
+#!/bin/bash
+
+if [ -f /home/ketan/.config/i3blocks/flags/mouse_check ]
+then
+    echo ''
+    echo ''
+    echo "#FD971F"
+else
+    echo ''
+    echo ''
+    echo "#F4BF75"
+fi
