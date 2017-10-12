@@ -26,23 +26,23 @@ Checks the current status of pointing devices
 - **disk\_acc**  
 Accurate depiction of free disk space
 
-- **wifi\_signal\_strength**
+- **wifi\_signal\_strength**  
 Shows the wifi SSID and singal strength. Shows N/A incase no connection is found
 
-- **battery\_health**
+- **battery\_health**  
 Shows the battery health ( A new laptop should show something around 98% )
 
-- **battery**
+- **battery**  
 Shows the battery life, with dynamic icons for different levels. Icons are also provided to represent consumption and charging.
 
-- **screenshot**
+- **screenshot**  
 Takes a screen shot of the whole screen and saves it in the ~/Pictures/Screenshots/ directory with the filename of current date & time.
 
-- **bandwidth**
+- **bandwidth**  
 Tells the correct network traffic in KB/s from /proc/net/dev file.
 
-- **date**
+- **date**  
 Tells the date in the format of <Week Day, day of month, month name, year>.
 
-- **time**
+- **time**  
 Tells the current time in the format of <Hour, Minute, AM/PM>
