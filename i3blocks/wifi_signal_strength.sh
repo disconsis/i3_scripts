@@ -21,9 +21,9 @@ else
     signalStrengthPercentage=$( echo "$signalStrength"*100 | bc | awk '{print int($1)}');
     
     # fullname
-    echo " $ssid   $signalStrengthPercentage%";
+    echo " $ssid   $signalStrengthPercentage%";
     # shortname
-    echo " $ssid   $signalStrengthPercentage%";
+    echo " $ssid   $signalStrengthPercentage%";
     # color
     echo "#A7FFEB";
 fi
