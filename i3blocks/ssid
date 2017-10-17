@@ -1,0 +1,16 @@
+#!/bin/bash
+
+if [[ $# -gt 0 ]]; then
+    iface=$1
+else
+    iface=wlp4s0
+fi
+
+ssid=$(iwconfig $iface 2>/dev/null | head -n 1 | cut -d : -f 2 | cut -d '"' -f 2 | xargs)
+if [ "$ssid" != "off/any" ]; then
+    echo "$ssid"
+    echo "$ssid"
+else
+    echo ""
+    echo ""
+fi
