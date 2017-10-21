@@ -1,9 +1,15 @@
 #!/bin/bash
 
 # output for wireless interface
-iwconfigOutput=$(iwconfig wlp58s0);
+if [[ $# -ge 1 ]]; then
+    iface=$1
+else
+    iface="wlp58s0"
+fi
 
-flag=$(iwconfig wlp58s0 | grep "ESSID" | cut -d ':' -f2);
+iwconfigOutput=$(iwconfig $iface);
+
+flag=$(echo $iwconfigOutput | grep "ESSID" | cut -d ':' -f2);
 
 if [ "$flag" = "off/any  " ]; then
     # fullname
