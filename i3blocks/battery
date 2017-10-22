@@ -51,15 +51,15 @@ if ($percent < 5) {
 $full_text .= "$percent%";
 
 if ($status eq 'Discharging') {
-	$full_text .= '  ';
+	$full_text .= '';
 } elsif ($status eq 'Charging') {
-	$full_text .= '  ';
+	$full_text .= '';
 }
 
 $short_text = $full_text;
 
 if ($acpi =~ /(\d\d:\d\d):/) {
-	$full_text .= " ($1)";
+	$full_text .= "($1)";
 }
 
 # print text
@@ -72,16 +72,19 @@ if ($status eq 'Discharging') {
 	if ($percent < 25) {
 		print "#ffb74d\n";
 	} elsif ($percent < 50) {
-		print "#FFAE00\n";
+		print "#ffd200\n";
 	} elsif ($percent < 75) {
-		print "#FFF600\n";
+		print "#a3ff00\n";
 	} else {
-		print "#A8FF00\n";
+		print "#76FF03\n";
 	}
 
 	if ($percent < 5) {
 		exit(33);
 	}
+}
+else {
+	print "#76FF03\n"
 }
 
 exit(0);

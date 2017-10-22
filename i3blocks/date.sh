@@ -4,7 +4,7 @@
 date=$(date '+%a %d %b %Y')
 
 # full name
-echo $date;
+echo "$date";
 
 # short name
-echo $date;
+echo "$date";

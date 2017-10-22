@@ -29,6 +29,3 @@ echo " $transmittedKBs KB/s   $receivedKBs KB/s";
 
 # shortname
 echo " $transmittedKBs KB/s   $receivedKBs KB/s";
-
-# color
-echo "#EEFF41"

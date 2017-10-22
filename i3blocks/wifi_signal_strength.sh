@@ -11,7 +11,7 @@ if [ "$flag" = "off/any  " ]; then
     # shortname
     echo " N/A   N/A";
     # color
-    echo "#FF8A80";
+    echo "#FF80AB";
 else
     # extracting the ssid of the connection
     ssid=$( echo "$iwconfigOutput" | grep "ESSID" | cut -d '"' -f2);
@@ -25,5 +25,5 @@ else
     # shortname
     echo " $ssid   $signalStrengthPercentage%";
     # color
-    echo "#A7FFEB";
+    echo "#18FFFF";
 fi

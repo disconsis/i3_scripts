@@ -8,6 +8,3 @@ echo "$batteryHealth";
 
 # short name
 echo "$batteryHealth";
-
-# color
-echo "#f48fb1";

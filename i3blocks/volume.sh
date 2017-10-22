@@ -12,20 +12,20 @@ isMute=$(echo $commandOutput | cut -d ' ' -f 6 | sed 's/[][]//g');
 if [ "$isMute" = "off" ]
 then
     # full name
-    echo "  $volumeValue";
+    echo " $volumeValue";
     
     # short name
-    echo "  $volumeValue";
+    echo " $volumeValue";
     
     # color
-    echo "#FF8A80"
+    echo "#FF80AB"
 else
     # full name
-    echo "  $volumeValue";
+    echo " $volumeValue";
     
     # short name
-    echo "  $volumeValue";
+    echo " $volumeValue";
     
     # color
-    echo "#A7FFEB"
+    echo "#76FF03"
 fi
