@@ -1,0 +1,15 @@
+#!/bin/bash
+
+temp=$(hddtemp /dev/sda | tail -n 1 | cut -d : -f 3)
+tempNum=$(echo $temp | tr -d -c [:digit:])
+
+echo $temp
+echo $temp
+
+if [[ $tempNum -lt 30 ]]; then
+    echo "#A6F22E"
+elif [[ $tempNum -lt 40 ]]; then
+    echo "#F4BF75"
+else
+    echo "#FD971F"
+fi
