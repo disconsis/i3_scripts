@@ -1,0 +1,129 @@
+#!/usr/bin/python3
+
+import argparse
+import os
+import subprocess as proc
+import time
+import pickle
+
+
+OLD_RESULT_FILE = '/tmp/bandwidth-old'
+
+
+def get_iface():
+    for route in proc.check_output(
+            'ip route'.split()).decode('utf-8').splitlines():
+        if 'default' in route:
+            iface = route.split()[4]
+            break
+    return iface
+
+
+def is_down(iface):
+    statefile = '/sys/class/net/{}/operstate'.format(iface)
+    if not os.path.exists(statefile):
+        return True
+    with open(statefile) as fp:
+        return not fp.read() == 'up\n'
+
+
+def get_unit(rate):
+    units = {0: 'B/s', 1: 'kB/s', 2: 'mB/s', 3: 'gB/s', 4: 'tB/s'}
+    rate = int(rate)
+    power = 0
+    while rate > 1024:
+        power += 1
+        rate = rate >> 10
+    return str(rate) + ' ' + units[power]
+
+
+def write_data(rx, tx):
+    with open(OLD_RESULT_FILE, 'wb') as fp:
+        pickle.dump((time.time(), rx, tx), fp)
+
+
+def get_usage(iface):
+    stats_dir = '/sys/class/net/{}/statistics/'.format(iface)
+    with open(stats_dir + 'rx_bytes') as fp:
+        rx = int(fp.read())
+    with open(stats_dir + 'tx_bytes') as fp:
+        tx = int(fp.read())
+    if not os.path.exists(OLD_RESULT_FILE):
+        write_data(rx, tx)
+        return 0, 0
+    try:
+        with open(OLD_RESULT_FILE, 'rb') as fp:
+            time_old, rx_old, tx_old = pickle.load(fp)
+    except (EOFError, pickle.UnpicklingError):
+        write_data(rx, tx)
+        return 0, 0
+    else:
+        write_data(rx, tx)
+    time_diff = time.time() - time_old
+    rx_rate = (rx - rx_old) // time_diff
+    tx_rate = (tx - tx_old) // time_diff
+    return int(rx_rate), int(tx_rate)
+
+
+def parse_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-i', '--iface', default=None)
+    parser.add_argument('-in', '--inlabel', default='R<sup>x</sup>')
+    parser.add_argument('-out', '--outlabel', default='T<sup>x</sup>')
+    parser.add_argument('-ic', '--incolor', default=None)
+    parser.add_argument('-oc', '--outcolor', default=None)
+    parser.add_argument('-z', '--zero', action='store_true',
+                        help='print even if rate is zero')
+    parser.add_argument('-q', '--quiet', action='store_true',
+                        help="don't print if iface down")
+    parser.add_argument('--alert-color', default='#f92672',
+                        help="color to use if iface down")
+    args = parser.parse_args()
+    return args
+
+
+def main():
+    args = parse_args()
+    if args.iface is not None:
+        iface = args.iface
+    else:
+        iface = get_iface()
+
+    if is_down(iface):
+        if not args.quiet:
+            print("{} down".format(iface))
+            print("{} down".format(iface))
+            print(args.alert_color)
+        exit(0)
+
+    rx_rate, tx_rate = get_usage(iface)
+    if args.zero or rx_rate != 0:
+        rx_string = args.inlabel + ' ' + get_unit(rx_rate)
+    if args.zero or tx_rate != 0:
+        tx_string = args.outlabel + ' ' + get_unit(tx_rate)
+
+    if args.incolor is not None:
+        rx_string = "<span color='{color}'>{rate}</span>".format(
+            color=args.incolor, rate=rx_string
+        )
+    if args.outcolor is not None:
+        tx_string = "<span color='{color}'>{rate}</span>".format(
+            color=args.outcolor, rate=tx_string
+        )
+
+    if rx_rate and tx_rate:
+        ratestring = rx_string + ' ' + tx_string
+    elif rx_rate:
+        ratestring = rx_string
+    elif tx_rate:
+        ratestring = tx_string
+    else:
+        ratestring = ""
+
+    if ratestring:
+        print(ratestring)
+        print(ratestring)
+
+
+if __name__ == '__main__':
+    main()
