@@ -7,17 +7,14 @@ import i3ipc
 from collections import defaultdict
 import re
 import fasteners
-import pickle
-# import posix_ipc as posix
+from rename_ws import escape
 
 
 FOCUSED_COLOR = 'cyan'
-LAST_FOCUSED_COLOR = 'yellow'
+LAST_FOCUSED_COLOR = 'white'
 LOCK_FILE = '/tmp/ws_name_lock'
 LAST_LOCK_FILE = '/tmp/last_win_lock'
 LAST_FOCUSED_FILE = '/tmp/i3_last_focused'
-IFACES_LIST = '/tmp/ifaces.pickle'
-# SEMAPHORE_NAME = '/i3_last_sema'
 
 
 def classify_windows(i3):
@@ -46,7 +43,7 @@ def find_apps(windows, focused_window=None, last_focused_win=None):
     for window in windows:
         if window.name is None:
             continue
-        app = get_app(window.name)
+        app = get_app(window)
         if window == focused_window:
             app = "<span foreground='{0}'>{1}</span>".format(
                 FOCUSED_COLOR,
@@ -62,8 +59,8 @@ def find_apps(windows, focused_window=None, last_focused_win=None):
     return apps
 
 
-def get_app(title):
-
+def get_app(window):
+    title = window.name
     # download manager
     download_regex = re.compile('^uGet( - (\d+) tasks)?$')
     match = download_regex.fullmatch(title)
@@ -112,54 +109,27 @@ def get_app(title):
     if media_regex.fullmatch(title):
         return ''
 
-    # Wireshark
-    try:
-        ifaces = pickle.load(IFACES_LIST)
-    except Exception as err:
-        ifaces = []
-        out = proc.check_output('ip link show up'.split()).decode('utf-8')
-        for i, line in enumerate(out.splitlines()):
-            if i % 2 == 0:
-                iface = line.split()[1][:-1]
-                ifaces.append('Loopback: {}'.format(iface) if iface == 'lo'
-                              else iface)
-        try:
-            with open(IFACES_LIST, 'wb') as fp:
-                pickle.dump(ifaces, fp)
-        except Exception as err:
-            print(2, 'Error in writing ifaces to {_list}: {err}'.format(
-                _list=IFACES_LIST, err=err
-            ))
-
-    iface_re_group = '({})'.format('|'.join('{}'.format(iface)
-                                            for iface in ifaces))
-    wireshark_regex = [re.compile('^The Wireshark Network Analyzer$'),
-                       re.compile('^Capturing from {}$'.format(iface_re_group)),
-                       re.compile('^\*{}'.format(iface_re_group))]
-    for regex in wireshark_regex:
-        if regex.match(title):
-            return ''
+    # wireshark
+    if window.window_class == "Wireshark":
+        return ''
 
     # terminal
     if title in ('Terminal', 'urxvt'):
-        # return ''
         return ''
 
     return None
 
 
 def get_new_name(workspace, apps):
-    # unnamed workspace
     count = workspace.name.count(':')
     if count in {0, 1}:
+        # unnamed workspace
         new_name = '{}: {}'.format(workspace.num, ' '.join(apps))
-    # named workspace
-    elif count == 2:
-        custom_name = workspace.name.split(':')[1]
+    else:
+        # named workspace
+        custom_name = ':'.join(workspace.name.split(':')[1:-1])
         new_name = '{}:{}: {}'.format(workspace.num, custom_name,
                                       ' '.join(apps))
-    else:
-        raise ValueError
     return new_name
 
 
@@ -168,17 +138,11 @@ def rename_workspace(i3, workspace, windows, focused_window=None,
     if not len(windows):
         return
     apps = find_apps(windows, focused_window, last_focused_win)
-    try:
-        new_name = get_new_name(workspace, apps)
-    except ValueError:
-        proc.call(['i3-nagbar', '-m',
-                   '"too many `:` in workspace {}"'.format(workspace.num)])
-        return
-    else:
-        if new_name != workspace.name:
-            i3.command('rename workspace "{}" to "{}"'.format(
-                workspace.name, new_name
-            ))
+    new_name = get_new_name(workspace, apps)
+    if new_name != workspace.name:
+        i3.command('rename workspace "{}" to "{}"'.format(
+            escape(workspace.name), escape(new_name)
+        ))
 
 
 def rename_everything(i3, e):
