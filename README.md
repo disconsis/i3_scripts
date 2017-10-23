@@ -31,7 +31,7 @@ Highlights the currently focused and the last focused window in the bar
 	- **Description:** Accurate depiction of free disk space
 
 - **wifi\_signal\_strength**
-	- **Arguments:** [interface] *ssidColor* *signalColor* *offColor* *seperatorColor*  
+	- **Arguments:** [interface] *ssidColor* *signalColor* *offColor* *separatorColor*  
 	- **Example:** wifi_signal_strength.sh wlp58s0 "#ff80ab" "#69F0AE" "#ff80ab" "#8b96d2"
 	- **Markup:** pango
 	- **Description:** Shows the wifi SSID and singal strength of the mentioned interface. Shows N/A incase no connection is found.
