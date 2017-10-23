@@ -51,9 +51,9 @@ if ($percent < 5) {
 $full_text .= "$percent%";
 
 if ($status eq 'Discharging') {
-	$full_text .= '';
+	$full_text .= '  ';
 } elsif ($status eq 'Charging') {
-	$full_text .= '';
+	$full_text .= '  ';
 }
 
 $short_text = $full_text;
