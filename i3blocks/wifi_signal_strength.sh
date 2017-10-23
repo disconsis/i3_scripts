@@ -13,19 +13,19 @@ if [[ $# -ge 5 ]]; then
     signalColor=$3;
     offColor=$4;
     innerSeparatorColor=$5;
-elif [[ $# -eq 4 ]]; then
+    elif [[ $# -eq 4 ]]; then
     iface=$1;
     ssidColor=$2;
     signalColor=$3;
     offColor=$4;
-elif [[ $# -eq 3 ]]; then
+    elif [[ $# -eq 3 ]]; then
     iface=$1;
     ssidColor=$2;
     signalColor=$3;
-elif [[ $# -eq 2 ]]; then
+    elif [[ $# -eq 2 ]]; then
     iface=$1;
     ssidColor=$2;
-elif [[ $# -eq 1 ]]; then
+    elif [[ $# -eq 1 ]]; then
     iface=$1;
 else
     echo "iface needed. ERROR!!"
@@ -34,9 +34,9 @@ fi
 
 iwconfigOutput=$(iwconfig $iface);
 
-flag=$(echo $iwconfigOutput | grep "ESSID" | cut -d ':' -f2);
+flag=$(echo $iwconfigOutput | grep "ESSID" | cut -d ':' -f2 | cut -d ' ' -f1);
 
-if [ "$flag" = "off/any  " ]; then
+if [ "$flag" = "off/any" ]; then
     # fullname
     echo "<span foreground='$offColor'> N/A</span> <span foreground='$innerSeparatorColor'> ∙ </span> <span foreground='$offColor'> N/A</span>";
     # shortname
