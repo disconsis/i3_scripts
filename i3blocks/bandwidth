@@ -104,10 +104,8 @@ def main():
         exit(0)
 
     rx_rate, tx_rate = get_usage(iface)
-    if args.zero or rx_rate != 0:
-        rx_string = args.inlabel + ' ' + get_unit(rx_rate)
-    if args.zero or tx_rate != 0:
-        tx_string = args.outlabel + ' ' + get_unit(tx_rate)
+    rx_string = args.inlabel + ' ' + get_unit(rx_rate)
+    tx_string = args.outlabel + ' ' + get_unit(tx_rate)
 
     if args.incolor is not None:
         rx_string = "<span color='{color}'>{rate}</span>".format(
@@ -118,14 +116,16 @@ def main():
             color=args.outcolor, rate=tx_string
         )
 
-    if rx_rate and tx_rate:
-        ratestring = rx_string + ' ' + tx_string
-    elif rx_rate:
-        ratestring = rx_string
-    elif tx_rate:
-        ratestring = tx_string
+    if not args.zero:
+        if rx_rate == 0:
+            rx_string = ""
+        if tx_rate == 0:
+            tx_string = ""
+        separator = " " if rx_rate and tx_rate else ""
     else:
-        ratestring = ""
+        separator = " "
+
+    ratestring = rx_string + separator + tx_string
 
     print(ratestring)
     print(ratestring)
