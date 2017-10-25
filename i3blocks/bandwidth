@@ -16,6 +16,8 @@ def get_iface():
         if 'default' in route:
             iface = route.split()[4]
             break
+    else:
+        iface = ""
     return iface
 
 
