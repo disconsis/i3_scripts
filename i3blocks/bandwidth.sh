@@ -1,5 +1,30 @@
 #!/bin/bash
 
+# reading arguments
+# if [[ $# -ge 4 ]]; then
+#     uploadIcon=$1;
+#     downloadIcon=$2;
+#     uploadColor=$3;
+#     downloadColor=$4;
+#     elif [[ $# -eq 2 ]]; then
+#     iface=$1;
+#     ssidColor=$2;
+#     signalColor=$3;
+#     offColor=$4;
+#     elif [[ $# -eq 3 ]]; then
+#     iface=$1;
+#     ssidColor=$2;
+#     signalColor=$3;
+#     elif [[ $# -eq 2 ]]; then
+#     iface=$1;
+#     ssidColor=$2;
+#     elif [[ $# -eq 1 ]]; then
+#     iface=$1;
+# else
+#     echo "iface needed. ERROR!!"
+#     exit;
+# fi
+
 # /proc/net/dev output for wlp58s0 interface
 networkInformation=$(cat /proc/net/dev | grep wlp58s0);
 
