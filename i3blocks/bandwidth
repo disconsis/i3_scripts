@@ -72,6 +72,7 @@ def parse_args():
     parser.add_argument('-i', '--iface', default=None)
     parser.add_argument('-in', '--inlabel', default='R<sup>x</sup>')
     parser.add_argument('-out', '--outlabel', default='T<sup>x</sup>')
+    parser.add_argument('-al', '--alertlabel', default="")
     parser.add_argument('-ic', '--incolor', default=None)
     parser.add_argument('-oc', '--outcolor', default=None)
     parser.add_argument('-z', '--zero', action='store_true',
@@ -93,9 +94,13 @@ def main():
 
     if is_down(iface):
         if not args.quiet:
-            print("{} down".format(iface))
-            print("{} down".format(iface))
+            print("{}{} down".format(args.alertlabel, iface))
+            print("{}{} down".format(args.alertlabel, iface))
             print(args.alert_color)
+        else:
+            print()
+            print()
+            print()
         exit(0)
 
     rx_rate, tx_rate = get_usage(iface)
@@ -122,9 +127,8 @@ def main():
     else:
         ratestring = ""
 
-    if ratestring:
-        print(ratestring)
-        print(ratestring)
+    print(ratestring)
+    print(ratestring)
 
 
 if __name__ == '__main__':
