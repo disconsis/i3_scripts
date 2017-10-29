@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-# TODO: highlight last focused window
+# TODO: map glyphs in separate file
 
 import subprocess as proc
 import i3ipc
@@ -116,6 +116,9 @@ def get_app(window):
     # terminal
     if title in ('Terminal', 'urxvt'):
         return ''
+
+    if window.window_class == "Nautilus":
+        return ''
 
     return None
 
