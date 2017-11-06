@@ -129,6 +129,10 @@ def get_app(window):
     if window.window_class in ('Pinta', 'Pqiv'):
         return glyphs['image viewer']
 
+    # fontforge
+    if window.window_class == 'fontforge':
+        return glyphs['fontforge']
+
     return None
 
 
