@@ -64,76 +64,51 @@ def find_apps(windows, focused_window=None, last_focused_win=None):
 
 
 def get_app(window):
-    title = window.name
     # download manager
-    download_regex = re.compile('^uGet( - (\d+) tasks)?$')
-    match = download_regex.fullmatch(title)
-    if match is None:
-        pass
-    elif match.groups() == (None, None):
-        return glyphs['download manager']
-    else:
-        num_tasks = match.group(2)
-        return glyphs['download manager'] + ' +{}'.format(num_tasks)
-
-    # browser
-    browser_regex = [
-        re.compile('^((.+) - )?Mozilla Firefox$'),
-        re.compile('^((.+) - )?Vimperator$'),
-    ]
-    for reg in browser_regex:
-        match = reg.fullmatch(title)
-        if match is None:
-            continue
-        elif len(match.groups()) == 1:  # implies no subtitle
-            return glyphs['browser']
+    if window.window_class == 'Uget-gtk':
+        match = re.fullmatch('^uGet(?: - (?P<num>\d+) tasks)?$', window.name)
+        num_tasks = match.group('num')
+        if num_tasks is not None:
+            return glyphs['download manager'] + ' +' + num_tasks
         else:
-            yt_regex = re.compile('^(.+ - )?YouTube$')
-            if yt_regex.fullmatch(str(match.group(2))):
-                return glyphs['youtube']
+            return glyphs['download manager']
+    # browser/youtube
+    elif window.window_class in ('Firefox', 'Google-chrome'):
+        match = re.match(
+            '^(?:(?P<url>.+) - )(?P<browser>Mozilla Firefox|Vimperator|Google Chrome)',
+            window.name
+        )
+        url = match.group('url')
+        if url is not None and url.endswith('- YouTube'):
+            return glyphs['youtube']
+        else:
             return glyphs['browser']
-
     # ebook reader
-    okular_regex = re.compile('^(.+ – )?Okular$')  # IMP: the dash is abnormal
-    if okular_regex.fullmatch(title):
+    elif window.window_class == 'Okular':
         return glyphs['ebook reader']
-
     # virtual machine
-    vm_regex = [
-        re.compile(('^(.+ - )?VMware Workstation 12'
-                    ' Player (Non-commercial use only)$')),
-        re.compile('^(.+ (\[.+\]) - )?Oracle VM VirtualBox Manager$')
-    ]
-    for reg in vm_regex:
-        if reg.fullmatch(title):
-            return glyphs['virtual machine']
-
+    elif window.window_class in ('Vmplayer', 'VirtualBox'):
+        return glyphs['virtual machine']
     # media player
-    media_regex = re.compile('^(.* - )?VLC media player$')
-    if media_regex.fullmatch(title):
+    elif window.window_class == 'vlc':
         return glyphs['media player']
-
     # wireshark
-    if window.window_class == "Wireshark":
+    elif window.window_class == "Wireshark":
         return glyphs['wireshark']
-
     # terminal
-    if title in ('Terminal', 'urxvt'):
+    if window.name in ('Terminal', 'urxvt'):
         return glyphs['terminal']
-
     # file browser
-    if window.window_class == "Nautilus":
+    elif window.window_class == "Nautilus":
         return glyphs['file browser']
-
     # image viewer/editor
-    if window.window_class in ('Pinta', 'Pqiv'):
+    elif window.window_class in ('Pinta', 'Pqiv'):
         return glyphs['image viewer']
-
     # fontforge
-    if window.window_class == 'fontforge':
+    elif window.window_class == 'fontforge':
         return glyphs['fontforge']
-
-    return None
+    else:
+        return None
 
 
 def get_new_name(workspace, apps):
