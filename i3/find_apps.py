@@ -8,8 +8,12 @@ from collections import defaultdict
 import re
 import fasteners
 from rename_ws import escape
+import yaml
+import os
+import sys
 
 
+GLYPH_FILE = 'glyphs.yaml'
 FOCUSED_COLOR = 'cyan'
 LAST_FOCUSED_COLOR = 'white'
 LOCK_FILE = '/tmp/ws_name_lock'
@@ -67,11 +71,10 @@ def get_app(window):
     if match is None:
         pass
     elif match.groups() == (None, None):
-        return ''
+        return glyphs['download manager']
     else:
         num_tasks = match.group(2)
-        print(match.groups())
-        return ' +{}'.format(num_tasks)
+        return glyphs['download manager'] + ' +{}'.format(num_tasks)
 
     # browser
     browser_regex = [
@@ -83,19 +86,19 @@ def get_app(window):
         if match is None:
             continue
         elif len(match.groups()) == 1:  # implies no subtitle
-            return ''
+            return glyphs['browser']
         else:
             yt_regex = re.compile('^(.+ - )?YouTube$')
             if yt_regex.fullmatch(str(match.group(2))):
-                return ''
-            return ''
+                return glyphs['youtube']
+            return glyphs['browser']
 
-    # pdf viewer
+    # ebook reader
     okular_regex = re.compile('^(.+ – )?Okular$')  # IMP: the dash is abnormal
     if okular_regex.fullmatch(title):
-        return ''
+        return glyphs['ebook reader']
 
-    # virtual machines
+    # virtual machine
     vm_regex = [
         re.compile(('^(.+ - )?VMware Workstation 12'
                     ' Player (Non-commercial use only)$')),
@@ -103,25 +106,28 @@ def get_app(window):
     ]
     for reg in vm_regex:
         if reg.fullmatch(title):
-            return ''
+            return glyphs['virtual machine']
 
+    # media player
     media_regex = re.compile('^(.* - )?VLC media player$')
     if media_regex.fullmatch(title):
-        return ''
+        return glyphs['media player']
 
     # wireshark
     if window.window_class == "Wireshark":
-        return ''
+        return glyphs['wireshark']
 
     # terminal
     if title in ('Terminal', 'urxvt'):
-        return ''
+        return glyphs['terminal']
 
+    # file browser
     if window.window_class == "Nautilus":
-        return ''
+        return glyphs['file browser']
 
+    # image viewer/editor
     if window.window_class in ('Pinta', 'Pqiv'):
-        return ''
+        return glyphs['image viewer']
 
     return None
 
@@ -176,6 +182,8 @@ def rename_everything(i3, e):
 
 
 if __name__ == '__main__':
+    with open(os.path.join(sys.path[0], GLYPH_FILE)) as fp:
+        glyphs = yaml.load(fp)
     i3 = i3ipc.Connection()
     i3.on('workspace::focus', rename_everything)
     i3.on('window::focus', rename_everything)
