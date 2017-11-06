@@ -120,6 +120,9 @@ def get_app(window):
     if window.window_class == "Nautilus":
         return ''
 
+    if window.window_class in ('Pinta', 'Pqiv'):
+        return ''
+
     return None
 
 
