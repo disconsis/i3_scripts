@@ -78,6 +78,10 @@ def get_app(window):
             '^(?:(?P<url>.+) - )?(?P<browser>Mozilla Firefox|Vimperator|Google Chrome)',
             window.name
         )
+        if match is None:
+            # probably a stupid title like "confirm"
+            # in a floating window
+            return None
         url = match.group('url')
         if url is not None and url.endswith('- YouTube'):
             return glyphs['youtube']
