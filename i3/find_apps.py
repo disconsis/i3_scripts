@@ -75,7 +75,7 @@ def get_app(window):
     # browser/youtube
     elif window.window_class in ('Firefox', 'Google-chrome'):
         match = re.match(
-            '^(?:(?P<url>.+) - )(?P<browser>Mozilla Firefox|Vimperator|Google Chrome)',
+            '^(?:(?P<url>.+) - )?(?P<browser>Mozilla Firefox|Vimperator|Google Chrome)',
             window.name
         )
         url = match.group('url')
