@@ -74,8 +74,8 @@ def get_app(window):
             return glyphs['download manager']
     # browser/youtube
     elif window.window_class in ('Firefox', 'Google-chrome'):
-        match = re.match(
-            '^(?:(?P<url>.+) - )?(?P<browser>Mozilla Firefox|Vimperator|Google Chrome)',
+        match = re.fullmatch(
+            r'^(?:(?P<url>.+) - )?(?P<browser>Mozilla Firefox|Vimperator|Google Chrome)(?P<private> \(Private Browsing\))?$',
             window.name
         )
         if match is None:
