@@ -7,15 +7,14 @@ import i3ipc
 from collections import defaultdict
 import re
 import fasteners
-from rename_ws import escape
 import yaml
 import os
 import sys
 
-
-GLYPH_FILE = 'glyphs.yaml'
 FOCUSED_COLOR = 'cyan'
 LAST_FOCUSED_COLOR = 'white'
+GLYPH_FILE = 'glyphs.yaml'
+
 LOCK_FILE = '/tmp/ws_name_lock'
 LAST_LOCK_FILE = '/tmp/last_win_lock'
 LAST_FOCUSED_FILE = '/tmp/i3_last_focused'
@@ -136,7 +135,7 @@ def rename_workspace(i3, workspace, windows, focused_window=None,
     new_name = get_new_name(workspace, apps)
     if new_name != workspace.name:
         i3.command('rename workspace "{}" to "{}"'.format(
-            escape(workspace.name), escape(new_name)
+            workspace.name, new_name
         ))
 
 
