@@ -1,13 +1,18 @@
 #!/bin/bash
 
-# picking up last line a amixer output
-commandOutput=$(amixer -c 0 get Master | tail -n1);
+# Keep master at 60% for speaker and 25% for earphone profile for best results
+
+# picking up last line a amixer PCM channel
+commandOutput=$(amixer -M -c 0 get PCM | tail -n1);
+
+# pick up values for mute status from Master channel
+muteValue=$(amixer -M -c 0 get Master | tail -n1);
 
 # extracting volume percentatage
-volumeValue=$(echo $commandOutput | cut -d ' ' -f 4 | sed 's/[][]//g');
+volumeValue=$(echo $commandOutput | cut -d ' ' -f 5 | sed 's/[][]//g');
 
 # extracting mute status
-isMute=$(echo $commandOutput | cut -d ' ' -f 6 | sed 's/[][]//g');
+isMute=$(echo $muteValue | cut -d ' ' -f 6 | sed 's/[][]//g');
 
 if [ "$isMute" = "off" ]
 then
