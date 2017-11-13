@@ -1,23 +1,23 @@
 #!/usr/bin/python3
 
-# TODO: highlight last focused window
+# TODO: map glyphs in separate file
 
 import subprocess as proc
 import i3ipc
 from collections import defaultdict
 import re
 import fasteners
-import pickle
-# import posix_ipc as posix
-
+import yaml
+import os
+import sys
 
 FOCUSED_COLOR = 'cyan'
-LAST_FOCUSED_COLOR = 'yellow'
+LAST_FOCUSED_COLOR = 'white'
+GLYPH_FILE = 'glyphs.yaml'
+
 LOCK_FILE = '/tmp/ws_name_lock'
 LAST_LOCK_FILE = '/tmp/last_win_lock'
 LAST_FOCUSED_FILE = '/tmp/i3_last_focused'
-IFACES_LIST = '/tmp/ifaces.pickle'
-# SEMAPHORE_NAME = '/i3_last_sema'
 
 
 def classify_windows(i3):
@@ -46,7 +46,7 @@ def find_apps(windows, focused_window=None, last_focused_win=None):
     for window in windows:
         if window.name is None:
             continue
-        app = get_app(window.name)
+        app = get_app(window)
         if window == focused_window:
             app = "<span foreground='{0}'>{1}</span>".format(
                 FOCUSED_COLOR,
@@ -62,104 +62,68 @@ def find_apps(windows, focused_window=None, last_focused_win=None):
     return apps
 
 
-def get_app(title):
-
+def get_app(window):
     # download manager
-    download_regex = re.compile('^uGet( - (\d+) tasks)?$')
-    match = download_regex.fullmatch(title)
-    if match is None:
-        pass
-    elif match.groups() == (None, None):
-        return ''
-    else:
-        num_tasks = match.group(2)
-        print(match.groups())
-        return ' +{}'.format(num_tasks)
-
-    # browser
-    browser_regex = [
-        re.compile('^((.+) - )?Mozilla Firefox$'),
-        re.compile('^((.+) - )?Vimperator$'),
-    ]
-    for reg in browser_regex:
-        match = reg.fullmatch(title)
-        if match is None:
-            continue
-        elif len(match.groups()) == 1:  # implies no subtitle
-            return ''
+    if window.window_class == 'Uget-gtk':
+        match = re.fullmatch('^uGet(?: - (?P<num>\d+) tasks)?$', window.name)
+        num_tasks = match.group('num')
+        if num_tasks is not None:
+            return glyphs['download manager'] + ' +' + num_tasks
         else:
-            yt_regex = re.compile('^(.+ - )?YouTube$')
-            if yt_regex.fullmatch(str(match.group(2))):
-                return ''
-            return ''
-
-    # pdf viewer
-    okular_regex = re.compile('^(.+ – )?Okular$')  # IMP: the dash is abnormal
-    if okular_regex.fullmatch(title):
-        return ''
-
-    # virtual machines
-    vm_regex = [
-        re.compile(('^(.+ - )?VMware Workstation 12'
-                    ' Player (Non-commercial use only)$')),
-        re.compile('^(.+ (\[.+\]) - )?Oracle VM VirtualBox Manager$')
-    ]
-    for reg in vm_regex:
-        if reg.fullmatch(title):
-            return ''
-
-    media_regex = re.compile('^(.* - )?VLC media player$')
-    if media_regex.fullmatch(title):
-        return ''
-
-    # Wireshark
-    try:
-        ifaces = pickle.load(IFACES_LIST)
-    except Exception as err:
-        ifaces = []
-        out = proc.check_output('ip link show up'.split()).decode('utf-8')
-        for i, line in enumerate(out.splitlines()):
-            if i % 2 == 0:
-                iface = line.split()[1][:-1]
-                ifaces.append('Loopback: {}'.format(iface) if iface == 'lo'
-                              else iface)
-        try:
-            with open(IFACES_LIST, 'wb') as fp:
-                pickle.dump(ifaces, fp)
-        except Exception as err:
-            print(2, 'Error in writing ifaces to {_list}: {err}'.format(
-                _list=IFACES_LIST, err=err
-            ))
-
-    iface_re_group = '({})'.format('|'.join('{}'.format(iface)
-                                            for iface in ifaces))
-    wireshark_regex = [re.compile('^The Wireshark Network Analyzer$'),
-                       re.compile('^Capturing from {}$'.format(iface_re_group)),
-                       re.compile('^\*{}'.format(iface_re_group))]
-    for regex in wireshark_regex:
-        if regex.match(title):
-            return ''
-
+            return glyphs['download manager']
+    # browser/youtube
+    elif window.window_class in ('Firefox', 'Google-chrome'):
+        match = re.fullmatch(
+            r'^(?:(?P<url>.+) - )?(?P<browser>Mozilla Firefox|Vimperator|Google Chrome)(?P<private> \(Private Browsing\))?$',
+            window.name
+        )
+        if match is None:
+            # probably a stupid title like "confirm"
+            # in a floating window
+            return None
+        url = match.group('url')
+        if url is not None and url.endswith('- YouTube'):
+            return glyphs['youtube']
+        else:
+            return glyphs['browser']
+    # ebook reader
+    elif window.window_class == 'Okular':
+        return glyphs['ebook reader']
+    # virtual machine
+    elif window.window_class in ('Vmplayer', 'VirtualBox'):
+        return glyphs['virtual machine']
+    # media player
+    elif window.window_class == 'vlc':
+        return glyphs['media player']
+    # wireshark
+    elif window.window_class == "Wireshark":
+        return glyphs['wireshark']
     # terminal
-    if title in ('Terminal', 'urxvt'):
-        # return ''
-        return ''
-
-    return None
+    if window.name in ('Terminal', 'urxvt'):
+        return glyphs['terminal']
+    # file browser
+    elif window.window_class == "Nautilus":
+        return glyphs['file browser']
+    # image viewer/editor
+    elif window.window_class in ('Pinta', 'Pqiv'):
+        return glyphs['image viewer']
+    # fontforge
+    elif window.window_class == 'fontforge':
+        return glyphs['fontforge']
+    else:
+        return None
 
 
 def get_new_name(workspace, apps):
-    # unnamed workspace
     count = workspace.name.count(':')
     if count in {0, 1}:
+        # unnamed workspace
         new_name = '{}: {}'.format(workspace.num, ' '.join(apps))
-    # named workspace
-    elif count == 2:
-        custom_name = workspace.name.split(':')[1]
+    else:
+        # named workspace
+        custom_name = ':'.join(workspace.name.split(':')[1:-1])
         new_name = '{}:{}: {}'.format(workspace.num, custom_name,
                                       ' '.join(apps))
-    else:
-        raise ValueError
     return new_name
 
 
@@ -168,17 +132,11 @@ def rename_workspace(i3, workspace, windows, focused_window=None,
     if not len(windows):
         return
     apps = find_apps(windows, focused_window, last_focused_win)
-    try:
-        new_name = get_new_name(workspace, apps)
-    except ValueError:
-        proc.call(['i3-nagbar', '-m',
-                   '"too many `:` in workspace {}"'.format(workspace.num)])
-        return
-    else:
-        if new_name != workspace.name:
-            i3.command('rename workspace "{}" to "{}"'.format(
-                workspace.name, new_name
-            ))
+    new_name = get_new_name(workspace, apps)
+    if new_name != workspace.name:
+        i3.command('rename workspace "{}" to "{}"'.format(
+            workspace.name, new_name
+        ))
 
 
 def rename_everything(i3, e):
@@ -206,6 +164,8 @@ def rename_everything(i3, e):
 
 
 if __name__ == '__main__':
+    with open(os.path.join(sys.path[0], GLYPH_FILE)) as fp:
+        glyphs = yaml.load(fp)
     i3 = i3ipc.Connection()
     i3.on('workspace::focus', rename_everything)
     i3.on('window::focus', rename_everything)

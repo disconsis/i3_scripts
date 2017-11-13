@@ -4,7 +4,7 @@
 
 - **find\_apps.py**  
 	- **Description:** Changes workspace names to add glyphs of all the contained windows  
-Highlights the currently focused and the last focused window in the bar
+      Highlights the currently focused and the last focused window in the bar
 
 - **focus-last.py**  
 	- **Description:** Changes to the last focused app on `Alt-Tab` (or whatever you change it to)
@@ -13,7 +13,8 @@ Highlights the currently focused and the last focused window in the bar
 	- **Description:** Enables or disables all pointing devices 
 
 - **rename\_ws.py**  
-	- **Description:** Changes workspace names while keeping all the glyphs from **find\_apps.py**
+	- **Description:** Changes workspace names while keeping all the glyphs from **find\_apps.py**  
+      Also able to change workspace numbers.
 
 ## i3blocks
 *Note: Arguments in square brackets are mandatory while italicized ones are optional*
