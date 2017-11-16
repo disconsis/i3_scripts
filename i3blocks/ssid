@@ -9,6 +9,17 @@ fi
 ssid=$(iwconfig $iface 2>/dev/null | head -n 1 | cut -d : -f 2 | cut -d '"' -f 2 | xargs)
 
 if [ "$ssid" != "off/any" ]; then
+    # full name
     echo "$ssid"
+    # short name
     echo "$ssid"
+    # color
+    echo "#FFD740"
+else
+    # full name
+    echo "N/A"
+    # short name
+    echo "N/A"
+    # color
+    echo "#ff80ab"
 fi
