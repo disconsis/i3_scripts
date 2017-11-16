@@ -21,7 +21,7 @@ class FocusWatcher:
         self.listening_socket = socket.socket(socket.AF_UNIX,
                                               socket.SOCK_STREAM)
         if os.path.exists(settings['files']['SOCKET_FILE']):
-            os.remove(SOCKET_FILE)
+            os.remove(settings['files']['SOCKET_FILE'])
         self.listening_socket.bind(settings['files']['SOCKET_FILE'])
         self.listening_socket.listen(1)
         self.window_list = []
