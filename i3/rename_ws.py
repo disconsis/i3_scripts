@@ -1,10 +1,14 @@
+#/usr/bin/python3
+
+import yaml
+import os
+import sys
 import i3ipc
 import subprocess as proc
 import fasteners
 import argparse
 
-
-LOCK_FILE = '/tmp/ws_name_lock'
+SETTINGS_FILE = 'settings.yaml'
 
 
 def escape(name):
@@ -26,7 +30,6 @@ def change_num(i3, workspace, num):
         ))
 
 
-@fasteners.interprocess_locked(LOCK_FILE)
 def rename(i3, args):
     "change the workspace name/number according to the given input name"
 
@@ -83,7 +86,6 @@ def rename(i3, args):
             curr_ws.command('rename workspace to "{}"'.format(new_name))
 
 
-@fasteners.interprocess_locked(LOCK_FILE)
 def remove(i3, args):
     "remove workspace name"
 
@@ -111,8 +113,20 @@ def parse_args():
 def main():
     args = parse_args()
     i3 = i3ipc.Connection()
-    args.func(i3, args)
+    with fasteners.InterProcessLock(settings['files']['LOCK_FILE']):
+        args.func(i3, args)
 
 
 if __name__ == '__main__':
+    try:
+        with open(os.path.join(sys.path[0], SETTINGS_FILE)) as fp:
+            settings = yaml.load(fp)
+    except Exception as err:
+        print("[!] Couldn't load settings")
+        print(("[!] Ensure that '{}' is in the same directory as"
+               " this script").format(SETTINGS_FILE))
+        print("="*20)
+        print(err)
+        exit(1)
+
     main()

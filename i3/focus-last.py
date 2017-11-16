@@ -1,19 +1,16 @@
 #!/usr/bin/env python3
 
+import yaml
 import os
+import sys
 import socket
 import selectors
 import threading
 from argparse import ArgumentParser
 import i3ipc
 import fasteners
-# import posix_ipc as posix
 
-SOCKET_FILE = '/tmp/i3_focus_last'
-LAST_FOCUSED_FILE = '/tmp/i3_last_focused'
-# SEMAPHORE_NAME = '/i3_last_sema'
-MAX_WIN_HISTORY = 15
-LAST_LOCK_FILE = '/tmp/last_win_lock'
+SETTINGS_FILE = 'settings.yaml'
 
 
 class FocusWatcher:
@@ -23,14 +20,12 @@ class FocusWatcher:
         self.i3.on('window::focus', self.on_window_focus)
         self.listening_socket = socket.socket(socket.AF_UNIX,
                                               socket.SOCK_STREAM)
-        if os.path.exists(SOCKET_FILE):
+        if os.path.exists(settings['files']['SOCKET_FILE']):
             os.remove(SOCKET_FILE)
-        self.listening_socket.bind(SOCKET_FILE)
+        self.listening_socket.bind(settings['files']['SOCKET_FILE'])
         self.listening_socket.listen(1)
         self.window_list = []
         self.window_list_lock = threading.RLock()
-        # self.last_sema = posix.Semaphore(SEMAPHORE_NAME, flags=posix.O_CREAT,
-        #                                  initial_value=0)
 
     def on_window_focus(self, i3conn, event):
         with self.window_list_lock:
@@ -38,13 +33,12 @@ class FocusWatcher:
             if window_id in self.window_list:
                 self.window_list.remove(window_id)
             self.window_list.insert(0, window_id)
-            if len(self.window_list) > MAX_WIN_HISTORY:
-                del self.window_list[MAX_WIN_HISTORY:]
+            if len(self.window_list) > settings['window history length']:
+                del self.window_list[settings['window history length']:]
         if len(self.window_list) > 1:
-            with fasteners.InterProcessLock(LAST_LOCK_FILE):
-                with open(LAST_FOCUSED_FILE, 'w+') as fp:
+            with fasteners.InterProcessLock(settings['files']['LAST_LOCK_FILE']):
+                with open(settings['files']['LAST_FOCUSED_FILE'], 'w+') as fp:
                     fp.write(str(self.window_list[1]))
-            # self.last_sema.release()
 
     def launch_i3(self):
         self.i3.main()
@@ -87,6 +81,17 @@ class FocusWatcher:
 
 
 if __name__ == '__main__':
+    try:
+        with open(os.path.join(sys.path[0], SETTINGS_FILE)) as fp:
+            settings = yaml.load(fp)
+    except Exception as err:
+        print("[!] Couldn't load settings")
+        print(("[!] Ensure that '{}' is in the same directory as"
+               " this script").format(SETTINGS_FILE))
+        print("="*20)
+        print(err)
+        exit(1)
+
     parser = ArgumentParser(prog='focus-last.py',
                             description='''
         Focus last focused window.
@@ -103,7 +108,7 @@ if __name__ == '__main__':
 
     if args.switch:
         client_socket = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-        client_socket.connect(SOCKET_FILE)
+        client_socket.connect(settings['files']['SOCKET_FILE'])
         client_socket.send(b'switch')
         client_socket.close()
     else:

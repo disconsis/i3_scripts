@@ -9,23 +9,16 @@ import yaml
 import os
 import sys
 
-FOCUSED_COLOR = 'cyan'
-LAST_FOCUSED_COLOR = 'white'
-GLYPH_FILE = 'glyphs.yaml'
-
-DEBUG = True
-
-LOCK_FILE = '/tmp/ws_name_lock'
-LAST_LOCK_FILE = '/tmp/last_win_lock'
-LAST_FOCUSED_FILE = '/tmp/i3_last_focused'
+SETTINGS_FILE = 'settings.yaml'
 
 
 def classify_windows(i3):
     "get list of windows in each workspace"
+
     windows = i3.get_tree().leaves()
-    with fasteners.InterProcessLock(LAST_LOCK_FILE):
+    with fasteners.InterProcessLock(settings['files']['LAST_LOCK_FILE']):
         try:
-            with open(LAST_FOCUSED_FILE) as fp:
+            with open(settings['files']['LAST_FOCUSED_FILE']) as fp:
                 last_id = int(fp.read())
         except FileNotFoundError:
             last_id = None
@@ -42,6 +35,7 @@ def classify_windows(i3):
 
 
 def find_apps(windows, focused_window=None, last_focused_win=None):
+    colors = settings['colors']
     apps = []
     for window in windows:
         if window.name is None:
@@ -49,12 +43,12 @@ def find_apps(windows, focused_window=None, last_focused_win=None):
         app = get_app(window)
         if window == focused_window:
             app = "<span foreground='{0}'>{1}</span>".format(
-                FOCUSED_COLOR,
+                colors['focused'],
                 app if app is not None else '?'
             )
         elif window == last_focused_win:
             app = "<span foreground='{0}'>{1}</span>".format(
-                LAST_FOCUSED_COLOR,
+                colors['last focused'],
                 app if app is not None else '?'
             )
         if app is not None:
@@ -64,6 +58,7 @@ def find_apps(windows, focused_window=None, last_focused_win=None):
 
 def get_app(window):
     try:
+        glyphs = settings['glyphs']
         # download manager
         if window.window_class == 'Uget-gtk':
             match = re.fullmatch('^uGet(?: - (?P<num>\d+) tasks)?$', window.name)
@@ -116,7 +111,7 @@ def get_app(window):
     except Exception as err:
         print(err, file=sys.stdout)
         print(window.__dict__, file=sys.stdout)
-        if not DEBUG:  # continue if not debugging, else break
+        if not settings['debug'] is True:  # continue if not debugging, else break
             return None
 
 
@@ -154,7 +149,7 @@ def rename_everything(i3, e):
     for workspace in workspace_content.keys():
         windows = workspace_content[workspace]
         if workspace == focused_workspace:
-            with fasteners.InterProcessLock(LOCK_FILE):
+            with fasteners.InterProcessLock(settings['files']['LOCK_FILE']):
                 rename_workspace(i3, workspace, windows,
                                  focused_window, last_focused_win)
         else:
@@ -170,8 +165,17 @@ def rename_everything(i3, e):
 
 
 if __name__ == '__main__':
-    with open(os.path.join(sys.path[0], GLYPH_FILE)) as fp:
-        glyphs = yaml.load(fp)
+    try:
+        with open(os.path.join(sys.path[0], SETTINGS_FILE)) as fp:
+            settings = yaml.load(fp)
+    except Exception as err:
+        print("[!] Couldn't load settings")
+        print(("[!] Ensure that '{}' is in the same directory as"
+               " this script").format(SETTINGS_FILE))
+        print("="*20)
+        print(err)
+        exit(1)
+
     i3 = i3ipc.Connection()
     i3.on('workspace::focus', rename_everything)
     i3.on('window::focus', rename_everything)

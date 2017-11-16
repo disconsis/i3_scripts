@@ -1,0 +1,58 @@
+#               __  __  _
+#    ________  / /_/ /_(_)___  ____ ______
+#   / ___/ _ \/ __/ __/ / __ \/ __ `/ ___/
+#  (__  )  __/ /_/ /_/ / / / / /_/ (__  )
+# /____/\___/\__/\__/_/_/ /_/\__, /____/
+#                           /____/
+# ========================================
+
+# set this to 'False' (unless you want to things to break T.T)
+# debug: False causes find_apps.py to ignore exceptions when something breaks
+# debug: True is mostly for me (or anyone who wants to test/develop)
+# It causes the script to raise exceptions (and stop working)
+# so that I can see when the window classifying routine fails
+debug: True
+
+# application to glyph mappings (that show up in the workspace names in i3bar)
+# meant to be (heavily) customized
+# the default ones are nerd font glyphs (so these might render weird in your font)
+# these can be more than 1 character long
+glyphs:
+    download manager:       
+    browser:                
+    youtube:                
+    ebook reader:           
+    virtual machine:        
+    media player:           
+    wireshark:              
+    terminal:               
+    file browser:           
+    image viewer:           
+    fontforge:              
+
+# colors for currently and last focused windows' glyphs
+# these can either be X11 color names (wikipedia.org/wiki/X11_color_names#Color_name_chart)
+# or an RGB color specification (#RRGGBB)
+#        ^ this needs to be wrapped in quotes since '#' is a comment in yaml
+# since i3 v4.12, i3bar also supports transparency, so you can use RGBA colors too
+colors:
+    focused:                cyan
+    last focused:           light goldenrod
+
+
+# =========================================================
+# below this point, you shouldn't _have_ to change anything
+# (although you obviously can)
+
+# maximum length of window history list
+# typically, we only care about the second window in this list
+# the rest exist in the case that the list second window (...) have been closed
+window history length: 15
+
+# miscellaneous files used for locks, sockets, etc
+# you *really* shouldn't need to change these
+files:
+    LOCK_FILE:              /tmp/ws_name_lock
+    LAST_LOCK_FILE:         /tmp/last_win_lock
+    LAST_FOCUSED_FILE:      /tmp/i3_last_focused
+    SOCKET_FILE:            /tmp/i3_focus_last
