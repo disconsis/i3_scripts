@@ -1,0 +1,6 @@
+i3ipc
+fasteners
+selectors
+python3-xlib
+pyautogui
+pyyaml
