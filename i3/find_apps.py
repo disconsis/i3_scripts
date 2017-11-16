@@ -1,7 +1,5 @@
 #!/usr/bin/python3
 
-# TODO: map glyphs in separate file
-
 import subprocess as proc
 import i3ipc
 from collections import defaultdict
@@ -14,6 +12,8 @@ import sys
 FOCUSED_COLOR = 'cyan'
 LAST_FOCUSED_COLOR = 'white'
 GLYPH_FILE = 'glyphs.yaml'
+
+DEBUG = True
 
 LOCK_FILE = '/tmp/ws_name_lock'
 LAST_LOCK_FILE = '/tmp/last_win_lock'
@@ -63,55 +63,61 @@ def find_apps(windows, focused_window=None, last_focused_win=None):
 
 
 def get_app(window):
-    # download manager
-    if window.window_class == 'Uget-gtk':
-        match = re.fullmatch('^uGet(?: - (?P<num>\d+) tasks)?$', window.name)
-        num_tasks = match.group('num')
-        if num_tasks is not None:
-            return glyphs['download manager'] + ' +' + num_tasks
+    try:
+        # download manager
+        if window.window_class == 'Uget-gtk':
+            match = re.fullmatch('^uGet(?: - (?P<num>\d+) tasks)?$', window.name)
+            num_tasks = match.group('num')
+            if num_tasks is not None:
+                return glyphs['download manager'] + ' +' + num_tasks
+            else:
+                return glyphs['download manager']
+        # browser/youtube
+        elif window.window_class in ('Firefox', 'Google-chrome'):
+            match = re.fullmatch(
+                r'^(?:(?P<url>.+) - )?(?P<browser>Mozilla Firefox|Vimperator|Google Chrome)(?P<private> \(Private Browsing\))?$',
+                window.name
+            )
+            if match is None:
+                # probably a stupid title like "confirm"
+                # in a floating window
+                return None
+            url = match.group('url')
+            if url is not None and url.endswith('- YouTube'):
+                return glyphs['youtube']
+            else:
+                return glyphs['browser']
+        # ebook reader
+        elif window.window_class == 'Okular':
+            return glyphs['ebook reader']
+        # virtual machine
+        elif window.window_class in ('Vmplayer', 'VirtualBox'):
+            return glyphs['virtual machine']
+        # media player
+        elif window.window_class == 'vlc':
+            return glyphs['media player']
+        # wireshark
+        elif window.window_class == "Wireshark":
+            return glyphs['wireshark']
+        # terminal
+        if window.window_class in ('Gnome-terminal', 'URxvt'):
+            return glyphs['terminal']
+        # file browser
+        elif window.window_class == "Nautilus":
+            return glyphs['file browser']
+        # image viewer/editor
+        elif window.window_class in ('Pinta', 'Pqiv'):
+            return glyphs['image viewer']
+        # fontforge
+        elif window.window_class == 'fontforge':
+            return glyphs['fontforge']
         else:
-            return glyphs['download manager']
-    # browser/youtube
-    elif window.window_class in ('Firefox', 'Google-chrome'):
-        match = re.fullmatch(
-            r'^(?:(?P<url>.+) - )?(?P<browser>Mozilla Firefox|Vimperator|Google Chrome)(?P<private> \(Private Browsing\))?$',
-            window.name
-        )
-        if match is None:
-            # probably a stupid title like "confirm"
-            # in a floating window
             return None
-        url = match.group('url')
-        if url is not None and url.endswith('- YouTube'):
-            return glyphs['youtube']
-        else:
-            return glyphs['browser']
-    # ebook reader
-    elif window.window_class == 'Okular':
-        return glyphs['ebook reader']
-    # virtual machine
-    elif window.window_class in ('Vmplayer', 'VirtualBox'):
-        return glyphs['virtual machine']
-    # media player
-    elif window.window_class == 'vlc':
-        return glyphs['media player']
-    # wireshark
-    elif window.window_class == "Wireshark":
-        return glyphs['wireshark']
-    # terminal
-    if window.name in ('Terminal', 'urxvt'):
-        return glyphs['terminal']
-    # file browser
-    elif window.window_class == "Nautilus":
-        return glyphs['file browser']
-    # image viewer/editor
-    elif window.window_class in ('Pinta', 'Pqiv'):
-        return glyphs['image viewer']
-    # fontforge
-    elif window.window_class == 'fontforge':
-        return glyphs['fontforge']
-    else:
-        return None
+    except Exception as err:
+        print(err, file=sys.stdout)
+        print(window.__dict__, file=sys.stdout)
+        if not DEBUG:  # continue if not debugging, else break
+            return None
 
 
 def get_new_name(workspace, apps):
