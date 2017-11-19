@@ -29,6 +29,7 @@ glyphs:
     file browser:           
     image viewer:           
     fontforge:              
+    unknown:                
 
 # colors for currently and last focused windows' glyphs
 # these can either be X11 color names (wikipedia.org/wiki/X11_color_names#Color_name_chart)

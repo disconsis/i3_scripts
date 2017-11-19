@@ -44,12 +44,12 @@ def find_apps(windows, focused_window=None, last_focused_win=None):
         if window == focused_window:
             app = "<span foreground='{0}'>{1}</span>".format(
                 colors['focused'],
-                app if app is not None else '?'
+                app if app is not None else settings['glyphs']['unknown']
             )
         elif window == last_focused_win:
             app = "<span foreground='{0}'>{1}</span>".format(
                 colors['last focused'],
-                app if app is not None else '?'
+                app if app is not None else settings['glyphs']['unknown']
             )
         if app is not None:
             apps.append(app)
