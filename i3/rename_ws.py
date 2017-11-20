@@ -7,6 +7,7 @@ import i3ipc
 import subprocess as proc
 import fasteners
 import argparse
+from collections import defaultdict
 
 SETTINGS_FILE = 'settings.yaml'
 
@@ -96,6 +97,26 @@ def remove(i3, args):
     workspace.command('rename workspace to "{}"'.format(new_name))
 
 
+def reorder(i3, args):
+    "reorder all workspaces based on their output's position"
+
+    outputs = []
+    for ws in i3.get_workspaces():
+        if ws['rect'] not in outputs:
+            outputs.append(ws['rect'])
+    outputs.sort(key=lambda o: (o['y'], o['x']))
+
+    ws_num = 1
+    for output in outputs:
+        contained_workspaces = [
+            ws for ws in i3.get_workspaces() if ws['rect'] == output
+        ]
+        contained_workspaces.sort(key=lambda ws: ws['num'])
+        for workspace in contained_workspaces:
+            change_num(i3, workspace, ws_num)
+            ws_num += 1
+
+
 def parse_args():
     "parse argument on the command line"
 
@@ -106,6 +127,8 @@ def parse_args():
     rename_parser.set_defaults(func=rename)
     remove_parser = subparsers.add_parser('remove')
     remove_parser.set_defaults(func=remove)
+    reorder_parser = subparsers.add_parser('reorder')
+    reorder_parser.set_defaults(func=reorder)
     args = parser.parse_args()
     return args
 
