@@ -29,6 +29,7 @@ glyphs:
     file browser:           
     image viewer:           
     fontforge:              
+    office:                 
     unknown:                
 
 # colors for currently and last focused windows' glyphs

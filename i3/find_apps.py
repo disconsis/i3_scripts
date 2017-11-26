@@ -106,6 +106,9 @@ def get_app(window):
         # fontforge
         elif window.window_class == 'fontforge':
             return glyphs['fontforge']
+        # office
+        elif window.window_class.startswith('libreoffice'):
+            return glyphs['office']
         else:
             return None
     except Exception as err:
