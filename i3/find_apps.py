@@ -101,7 +101,7 @@ def get_app(window):
         elif window.window_class == "Nautilus":
             return glyphs['file browser']
         # image viewer/editor
-        elif window.window_class in ('Pinta', 'Pqiv'):
+        elif window.window_class in ('Pinta', 'Pqiv', 'feh'):
             return glyphs['image viewer']
         # fontforge
         elif window.window_class == 'fontforge':
@@ -168,6 +168,18 @@ def rename_everything(i3, e):
 
 
 if __name__ == '__main__':
+    i3 = i3ipc.Connection()
+    if len(sys.argv) > 1:
+        if len(sys.argv) == 2 and sys.argv[1] == 'debug':
+            for window in i3.get_tree().leaves():
+                print("name: {:80} class: {}".format(window.name,
+                                                     window.window_class))
+        else:
+            print("usage:")
+            print("\t{} -> start daemon".format(sys.argv[0]))
+            print("\t{} debug -> list current windows".format(sys.argv[0]))
+        exit(0)
+
     try:
         with open(os.path.join(sys.path[0], SETTINGS_FILE)) as fp:
             settings = yaml.load(fp)
@@ -179,7 +191,6 @@ if __name__ == '__main__':
         print(err)
         exit(1)
 
-    i3 = i3ipc.Connection()
     i3.on('workspace::focus', rename_everything)
     i3.on('window::focus', rename_everything)
     i3.on('window::move', rename_everything)
