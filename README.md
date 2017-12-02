@@ -174,6 +174,22 @@ If you're using this with **i3blocks/check_mouse**, it is neccessary to signal i
 bindsym $mod+grave exec "python ~/.config/i3blocks/scripts/mouse toggle; pkill -RTMIN+2 i3blocks"
 ```
 
+### Dependencies
+---
+The scripts depend on:
+1. i3ipc
+2. fasteners
+3. selectors
+4. python3-xlib
+5. pyautogui
+6. pyyaml
+
+Install dependencies by running
+```sh
+cd <path_to_repo>
+pip3 install -r i3/requirements.txt
+```
+
 ## i3blocks
 *Note: Arguments in square brackets are mandatory while italicized ones are optional*
 
