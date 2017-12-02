@@ -74,9 +74,7 @@ def get_app(window):
                 window.name
             )
             if match is None:
-                # probably a stupid title like "confirm"
-                # in a floating window
-                return None
+                return glyphs['browser']
             url = match.group('url')
             if url is not None and url.endswith('- YouTube'):
                 return glyphs['youtube']
