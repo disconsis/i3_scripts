@@ -3,6 +3,7 @@
 ## i3
 
 ### focus-last.py
+---
 
 #### Description
 Changes to the last focused window on `Alt-Tab` (or whatever you change it to)  
@@ -23,6 +24,7 @@ window history length: <num>
 ```
 
 ### find\_apps.py
+---
 
 #### Description
 Changes workspace names to add glyphs of all the contained windows  
@@ -108,6 +110,7 @@ bindsym $mod+Shift+z exec "pkill -f <path_to_repo>/i3/";restart
 Hitting $mod+Shift+z now restarts i3 as well as the scripts
 
 ### rename\_ws.py
+---
 
 #### Description
 Only useful with **find\_apps.py**  
@@ -154,6 +157,7 @@ python3 rename_ws.py reorder
 ```
 
 ### mouse.py
+---
 #### Description
 Enable, disable or toggle the state of all pointing devices collectively  
 The mouse pointer is moved to the right bottom corner before disabling.
