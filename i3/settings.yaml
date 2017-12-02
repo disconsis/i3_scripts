@@ -11,7 +11,7 @@
 # debug: True is mostly for me (or anyone who wants to test/develop)
 # It causes the script to raise exceptions (and stop working)
 # so that I can see when the window classifying routine fails
-debug: True
+debug: False
 
 # application to glyph mappings (that show up in the workspace names in i3bar)
 # meant to be (heavily) customized
