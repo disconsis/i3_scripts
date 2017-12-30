@@ -107,6 +107,9 @@ def get_app(window):
         # office
         elif window.window_class.startswith('libreoffice'):
             return glyphs['office']
+        # gvim
+        elif window.window_class == 'Gvim':
+            return glyphs['gvim']
         else:
             return None
     except Exception as err:

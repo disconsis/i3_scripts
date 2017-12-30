@@ -30,6 +30,7 @@ glyphs:
     image viewer:           
     fontforge:              
     office:                 
+    gvim:                   
     unknown:                
 
 # colors for currently and last focused windows' glyphs
