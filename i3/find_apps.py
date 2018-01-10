@@ -81,7 +81,7 @@ def get_app(window):
             else:
                 return glyphs['browser']
         # ebook reader
-        elif window.window_class == 'Okular':
+        elif window.window_class in ('Okular', 'Zathura'):
             return glyphs['ebook reader']
         # virtual machine
         elif window.window_class in ('Vmplayer', 'VirtualBox'):
