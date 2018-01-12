@@ -80,6 +80,9 @@ def get_app(window):
                 return glyphs['youtube']
             else:
                 return glyphs['browser']
+        # tor browser
+        elif window.window_class == 'Tor Browser':
+            return glyphs['tor']
         # ebook reader
         elif window.window_class in ('Okular', 'Zathura'):
             return glyphs['ebook reader']
