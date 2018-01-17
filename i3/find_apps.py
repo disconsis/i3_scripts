@@ -113,8 +113,12 @@ def get_app(window):
         # gvim
         elif window.window_class == 'Gvim':
             return glyphs['gvim']
+        # spim
+        elif window.window_class == 'QtSpim':
+            return glyphs['spim']
         else:
             return None
+
     except Exception as err:
         print(err, file=sys.stdout)
         print(window.__dict__, file=sys.stdout)
