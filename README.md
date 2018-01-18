@@ -42,6 +42,7 @@ Applications supported right now are:
     - if using one of the above browsers
 4. ebook reader
     - Okular
+    - Zathura
 5. virtual machine
     - VirtualBox
     - VMware player
@@ -60,7 +61,8 @@ Applications supported right now are:
 11. fontforge
 12. office
     - libre office
-13. unknown
+13. Gvim
+14. Spim (MIPS simulator)
 
 Adding new applications / classes is also pretty easy - see Configuration  
   
