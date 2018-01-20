@@ -63,7 +63,9 @@ Applications supported right now are:
 12. office
     - libre office
 13. Gvim
-14. Spim (MIPS simulator)
+14. editor
+    - Gedit
+15. Spim (MIPS simulator)
 
 Adding new applications / classes is also pretty easy - see Configuration  
   

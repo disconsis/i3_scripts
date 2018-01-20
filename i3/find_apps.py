@@ -113,6 +113,9 @@ def get_app(window):
         # gvim
         elif window.window_class == 'Gvim':
             return glyphs['gvim']
+        # editor
+        elif window.window_class == 'Gedit':
+            return glyphs['editor']
         # spim
         elif window.window_class == 'QtSpim':
             return glyphs['spim']
