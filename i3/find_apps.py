@@ -180,8 +180,9 @@ if __name__ == '__main__':
     if len(sys.argv) > 1:
         if len(sys.argv) == 2 and sys.argv[1] == 'debug':
             for window in i3.get_tree().leaves():
-                print("name: {:80} class: {}".format(window.name,
-                                                     window.window_class))
+                print("name: {:80}\nclass: {}\ninstance: {}".format(
+                    window.name, window.window_class, window.window_instance))
+                print('---')
         else:
             print("usage:")
             print("\t{} -> start daemon".format(sys.argv[0]))
