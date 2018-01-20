@@ -203,6 +203,7 @@ if __name__ == '__main__':
         print(err)
         exit(1)
 
+    rename_everything(i3, None)
     i3.on('workspace::focus', rename_everything)
     i3.on('window::focus', rename_everything)
     i3.on('window::move', rename_everything)
