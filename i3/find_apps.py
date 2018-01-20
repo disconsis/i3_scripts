@@ -102,7 +102,7 @@ def get_app(window):
         elif window.window_class == "Nautilus":
             return glyphs['file browser']
         # image viewer/editor
-        elif window.window_class in ('Pinta', 'Pqiv', 'feh'):
+        elif window.window_class in ('Pinta', 'Pqiv', 'feh', 'Eog'):
             return glyphs['image viewer']
         # fontforge
         elif window.window_class == 'fontforge':

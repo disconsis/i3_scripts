@@ -58,6 +58,7 @@ Applications supported right now are:
     - Pinta
     - pqiv
     - feh
+    - Eog
 11. fontforge
 12. office
     - libre office
