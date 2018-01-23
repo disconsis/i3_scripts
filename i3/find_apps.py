@@ -96,7 +96,8 @@ def get_app(window):
         elif window.window_class == "Wireshark":
             return glyphs['wireshark']
         # terminal
-        if window.window_class in ('Gnome-terminal', 'URxvt'):
+        if window.window_class in ('Gnome-terminal', 'URxvt', 'XTerm',
+                                   'st-256color'):
             return glyphs['terminal']
         # file browser
         elif window.window_class == "Nautilus":

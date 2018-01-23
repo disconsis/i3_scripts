@@ -52,6 +52,8 @@ Applications supported right now are:
 8. terminal
     - Gnome terminal
     - URxvt
+    - XTerm
+    - st (suckless terminal)
 9. file browser
     - Nautilus
 10. image viewer
