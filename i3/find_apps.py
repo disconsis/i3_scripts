@@ -90,7 +90,7 @@ def get_app(window):
         elif window.window_class in ('Vmplayer', 'VirtualBox'):
             return glyphs['virtual machine']
         # media player
-        elif window.window_class.lower() == 'vlc':
+        elif window.window_class and window.window_class.lower() == 'vlc':
             return glyphs['media player']
         # wireshark
         elif window.window_class == "Wireshark":
@@ -109,7 +109,7 @@ def get_app(window):
         elif window.window_class == 'fontforge':
             return glyphs['fontforge']
         # office
-        elif window.window_class.startswith('libreoffice'):
+        elif window.window_class and window.window_class.startswith('libreoffice'):
             return glyphs['office']
         # gvim
         elif window.window_class == 'Gvim':
