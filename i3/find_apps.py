@@ -128,6 +128,8 @@ def get_app(window):
         print(window.__dict__, file=sys.stdout)
         if not settings['debug'] is True:  # continue if not debugging, else break
             return None
+        else:
+            raise err
 
 
 def get_new_name(workspace, apps):
