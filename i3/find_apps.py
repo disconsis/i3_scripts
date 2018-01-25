@@ -119,6 +119,8 @@ def get_app(window):
             return glyphs['editor']
         # spim
         elif window.window_class == 'QtSpim':
+            if window.name == 'Console':
+                return None
             return glyphs['spim']
         else:
             return None
