@@ -188,8 +188,11 @@ if __name__ == '__main__':
     if len(sys.argv) > 1:
         if len(sys.argv) == 2 and sys.argv[1] == 'debug':
             for window in i3.get_tree().leaves():
-                print("name: {:80}\nclass: {}\ninstance: {}".format(
-                    window.name, window.window_class, window.window_instance))
+                print(
+                    "name: {:80}\nclass: {}\ninstance: {}\nrole: {}".format(
+                        window.name, window.window_class,
+                        window.window_instance, window.window_role
+                ))
                 print('---')
         else:
             print("usage:")
