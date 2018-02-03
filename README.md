@@ -68,6 +68,7 @@ Applications supported right now are:
 14. editor
     - Gedit
 15. Spim (MIPS simulator)
+16. Burp Suite
 
 Adding new applications / classes is also pretty easy - see Configuration  
   

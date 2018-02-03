@@ -34,6 +34,7 @@ glyphs:
     gvim:                   
     editor:                 
     spim:                   
+    burp suite:             
     unknown:                
 
 # colors for currently and last focused windows' glyphs

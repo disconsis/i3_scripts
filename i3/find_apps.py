@@ -122,6 +122,9 @@ def get_app(window):
             if window.name == 'Console':
                 return None
             return glyphs['spim']
+        # burp suite
+        elif window.name.startswith('Burp Suite'):
+            return glyphs['burp suite']
         else:
             return None
 
