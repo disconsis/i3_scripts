@@ -122,6 +122,11 @@ def get_app(window):
             if window.name == 'Console':
                 return None
             return glyphs['spim']
+        # android studio
+        elif window.window_class == 'jetbrains-studio' \
+                and window.window_instance == 'sun-awt-X11-XFramePeer' \
+                and 'Android Studio' in window.name.split(' - ')[-1]:
+            return glyphs['android studio']
         # burp suite
         elif window.name.startswith('Burp Suite'):
             return glyphs['burp suite']
