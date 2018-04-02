@@ -36,6 +36,7 @@ glyphs:
     spim:                   
     android studio:         
     burp suite:             
+    skype:                  
     unknown:                
 
 # colors for currently and last focused windows' glyphs

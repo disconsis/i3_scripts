@@ -127,6 +127,9 @@ def get_app(window):
                 and window.window_instance == 'sun-awt-X11-XFramePeer' \
                 and 'Android Studio' in window.name.split(' - ')[-1]:
             return glyphs['android studio']
+        # skype
+        elif window.window_class == 'Skype':
+            return glyphs['skype']
         # burp suite
         elif window.name.startswith('Burp Suite'):
             return glyphs['burp suite']
@@ -139,7 +142,8 @@ def get_app(window):
         if not settings['debug'] is True:  # continue if not debugging, else break
             return None
         else:
-            raise err
+            raise err('window title: {}\nwindow class:{}'.format(window.name,
+                                                                 window.window_class))
 
 
 def get_new_name(workspace, apps):
