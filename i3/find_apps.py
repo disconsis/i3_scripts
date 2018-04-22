@@ -90,7 +90,7 @@ def get_app(window):
         elif window.window_class in ('Vmplayer', 'VirtualBox'):
             return glyphs['virtual machine']
         # media player
-        elif window.window_class and window.window_class.lower() == 'vlc':
+        elif window.window_class and window.window_class.lower() in ('vlc', 'mplayer'):
             return glyphs['media player']
         # wireshark
         elif window.window_class == "Wireshark":

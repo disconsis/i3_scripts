@@ -48,6 +48,7 @@ Applications supported right now are:
     - VMware player
 6. media player
     - vlc/cvlc
+    - mplayer
 7. wireshark
 8. terminal
     - Gnome terminal
