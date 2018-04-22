@@ -62,9 +62,8 @@ def get_app(window):
         # download manager
         if window.window_class == 'Uget-gtk':
             match = re.fullmatch('^uGet(?: - (?P<num>\d+) tasks)?$', window.name)
-            num_tasks = match.group('num')
-            if num_tasks is not None:
-                return glyphs['download manager'] + ' +' + num_tasks
+            if match is not None and match.group('num') is not None:
+                return glyphs['download manager'] + ' +' + match.group('num')
             else:
                 return glyphs['download manager']
         # browser/youtube
