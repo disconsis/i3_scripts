@@ -142,8 +142,11 @@ def get_app(window):
         if not settings['debug'] is True:  # continue if not debugging, else break
             return None
         else:
-            raise err('window title: {}\nwindow class:{}'.format(window.name,
-                                                                 window.window_class))
+            raise RuntimeError(
+                'window title: {}\nwindow class:{}'.format(
+                    window.name, window.window_class
+                )
+            ) from err
 
 
 def get_new_name(workspace, apps):
