@@ -70,6 +70,7 @@ Applications supported right now are:
     - Gedit
 15. Spim (MIPS simulator)
 16. Burp Suite
+17. Gephi (graph visualizer)
 
 Adding new applications / classes is also pretty easy - see Configuration  
   

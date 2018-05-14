@@ -132,6 +132,9 @@ def get_app(window):
         # burp suite
         elif window.name.startswith('Burp Suite'):
             return glyphs['burp suite']
+        # gephi
+        elif 'Gephi' in window.window_class:
+            return glyphs['gephi']
         else:
             return None
 
