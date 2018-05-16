@@ -86,7 +86,9 @@ def get_app(window):
         elif window.window_class in ('Okular', 'Zathura'):
             return glyphs['ebook reader']
         # virtual machine
-        elif window.window_class in ('Vmplayer', 'VirtualBox'):
+        elif window.window_class in ('Vmplayer', 'VirtualBox',
+                                     'VirtualBox Manager',
+                                     'VirtualBox Machine'):
             return glyphs['virtual machine']
         # media player
         elif window.window_class and window.window_class.lower() in ('vlc', 'mplayer'):
