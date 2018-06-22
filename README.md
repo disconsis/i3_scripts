@@ -71,6 +71,7 @@ Applications supported right now are:
 15. Spim (MIPS simulator)
 16. Burp Suite
 17. Gephi (graph visualizer)
+18. IDA Disassembler
 
 Adding new applications / classes is also pretty easy - see Configuration  
   

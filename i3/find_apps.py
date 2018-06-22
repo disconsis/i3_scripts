@@ -131,6 +131,9 @@ def get_app(window):
         # skype
         elif window.window_class == 'Skype':
             return glyphs['skype']
+        # ida
+        elif window.window_class == 'IDA':
+            return glyphs['ida']
         # burp suite
         elif window.name.startswith('Burp Suite'):
             return glyphs['burp suite']
